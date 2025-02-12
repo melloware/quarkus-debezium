@@ -126,17 +126,12 @@ DELETE FROM CUSTOMERS WHERE id = 1033;
 
 ### 6. Verify Kafka Topic Messages
 
-Pull the Kafka message consumer tool:
+Access the Kafka UI Dashboard to monitor messages:
 
-```sh
-docker pull edenhill/kcat:1.7.1
-```
-
-Run `kcat` to check for changes in the `test.DEBEZIUM.CUSTOMERS` topic:
-
-```sh
-docker run --rm --tty --network debezium-oracle_default edenhill/kcat:1.7.1 -b kafka:9092 -C -t test.DEBEZIUM.CUSTOMERS
-```
+1. Open your web browser and navigate to http://localhost:8081
+2. Click on the "Topics" tab in the left sidebar
+3. Find and click on the "test.DEBEZIUM.CUSTOMERS" topic
+4. Select the "Messages" tab to view the change events in real-time
 
 ### 7. Create the PostgreSQL Sink Connector
 
