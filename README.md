@@ -17,6 +17,9 @@ The application:
 - Sending small payloads of change data through a WebSocket to the UI to render only what needs to be updated
 - Third party application can stream event driven data changes from Kafka
 
+[![Use Cases](https://github.com/melloware/quarkus-debezium/blob/main/docker/debezium-use-cases.png)](https://github.com/melloware/quarkus-debezium)
+
+
 ## Running the Stack
 
 This guide provides step-by-step instructions for setting up an Oracle database with Debezium, configuring source and sink connectors, and verifying data flow using Kafka and PostgreSQL.
