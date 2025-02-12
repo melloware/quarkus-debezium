@@ -1,0 +1,24 @@
+{
+  "name": "oracle-source-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.oracle.OracleConnector",
+    "database.connection.adapter": "LogMiner",
+    "database.dbname": "FREE",
+    "database.history.kafka.bootstrap.servers": "kafka:9092",
+    "database.history.kafka.topic": "history",
+    "database.hostname": "oracle",
+    "database.password": "dbz",
+    "database.pdb.name": "FREEPDB1",
+    "database.port": "1521",
+    "database.schema": "DEBEZIUM",
+    "database.server.name": "test",
+    "database.user": "c##dbzuser",
+    "include.schema.changes": "true",
+    "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
+    "schema.history.internal.kafka.topic": "schema-changes.test",
+    "snapshot.mode": "schema_only",
+    "table.include.list": "DEBEZIUM.CUSTOMERS,DEBEZIUM.PRODUCTS,DEBEZIUM.ORDERS",
+    "tasks.max": "1",
+    "topic.prefix": "test"
+  }
+}

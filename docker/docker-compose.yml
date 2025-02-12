@@ -1,0 +1,94 @@
+services:
+  zookeeper:
+    container_name: zookeeper_one
+    image: quay.io/debezium/zookeeper:latest
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+
+  kafka:
+    container_name: kafka_one
+    image: quay.io/debezium/kafka:latest
+    ports:
+      - 9092:9092
+    depends_on:
+      - zookeeper
+    links:
+      - zookeeper
+    environment:
+      - ZOOKEEPER_CONNECT=zookeeper:2181
+      - ADVERTISED_HOST_NAME=172.29.208.1
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+
+  connect:
+    container_name: debezium
+    image: jdbc-debezium-connect:latest
+    ports:
+      - 8083:8083
+    depends_on:
+      - kafka
+    links:
+      - kafka
+    environment:
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - GROUP_ID=1
+      - CONFIG_STORAGE_TOPIC=my_connect_configs
+      - OFFSET_STORAGE_TOPIC=my_connect_offsets
+      - STATUS_STORAGE_TOPIC=my_connect_statuses
+      - LD_LIBRARY_PATH=/instant_client
+      - KAFKA_DEBUG=true
+      - DEBUG_SUSPEND_FLAG=n
+      - JAVA_DEBUG_PORT=0.0.0.0:5005
+
+  kafka-ui:
+    container_name: kafka-dash
+    image: provectuslabs/kafka-ui:latest
+    depends_on:
+      - kafka
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+
+  # Source DB's
+  oracle:
+    image: container-registry.oracle.com/database/free:latest
+    container_name: oracle
+    restart: unless-stopped
+    ports:
+      - "1521:1521"   # Oracle Listener
+    environment:
+      ORACLE_PWD: "top_secret" # Initial SYS/SYSTEM password
+      ORACLE_SID: "FREE"
+      ENABLE_ARCHIVELOG: "true"
+    volumes:
+      - oracle_data:/opt/oracle/oradata  # Persist data
+      - ./oracle-initialize.sh:/home/oracle/oracle-initialize.sh
+      - ./oracle_logminer-setup.sh:/home/oracle/oracle_logminer-setup.sh
+      - ./oracle-load-data.sql:/home/oracle/oracle-load-data.sql
+
+  # Sinks DB's
+  postgres:
+    # *-----------------------------*
+    # To connect to the DB:
+    #   docker exec -it postgres bash -c 'psql -U $POSTGRES_USER $POSTGRES_DB'
+    # *-----------------------------*
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
+
+networks:
+  app-network:
+    driver: bridge
+    name: debezium-network
+
+volumes:
+  kafka_data:
+  oracle_data:
