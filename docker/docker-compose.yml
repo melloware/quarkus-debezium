@@ -6,6 +6,8 @@ services:
       - 2181:2181
       - 2888:2888
       - 3888:3888
+    networks:
+      - debezium-network
 
   kafka:
     container_name: kafka_one
@@ -21,6 +23,8 @@ services:
       - ADVERTISED_HOST_NAME=172.29.208.1
     volumes:
       - kafka_data:/var/lib/kafka/data
+    networks:
+      - debezium-network
 
   connect:
     container_name: debezium
@@ -41,6 +45,8 @@ services:
       - KAFKA_DEBUG=true
       - DEBUG_SUSPEND_FLAG=n
       - JAVA_DEBUG_PORT=0.0.0.0:5005
+    networks:
+      - debezium-network
 
   kafka-ui:
     container_name: kafka-dash
@@ -48,10 +54,12 @@ services:
     depends_on:
       - kafka
     ports:
-      - "8080:8080"
+      - "8081:8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+    networks:
+      - debezium-network
 
   # Source DB's
   oracle:
@@ -69,6 +77,8 @@ services:
       - ./oracle-initialize.sh:/home/oracle/oracle-initialize.sh
       - ./oracle_logminer-setup.sh:/home/oracle/oracle_logminer-setup.sh
       - ./oracle-load-data.sql:/home/oracle/oracle-load-data.sql
+    networks:
+      - debezium-network
 
   # Sinks DB's
   postgres:
@@ -83,11 +93,24 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - 5432:5432
+    networks:
+      - debezium-network
+
+  debezium-ui:
+    container_name: debezium-ui
+    image: quay.io/debezium/debezium-ui:latest
+    ports:
+      - "8082:8080"
+    environment:
+      - KAFKA_CONNECT_URIS=http://connect:8083
+    depends_on:
+      - connect
+    networks:
+      - debezium-network
 
 networks:
-  app-network:
+  debezium-network:
     driver: bridge
-    name: debezium-network
 
 volumes:
   kafka_data:
