@@ -1,34 +1,25 @@
 services:
-  zookeeper:
-    container_name: zookeeper_one
-    image: quay.io/debezium/zookeeper:latest
-    ports:
-      - 2181:2181
-      - 2888:2888
-      - 3888:3888
-    networks:
-      - debezium-network
-
   kafka:
-    container_name: kafka_one
+    container_name: kafka-kraft
     image: quay.io/debezium/kafka:latest
     ports:
       - 9092:9092
-    depends_on:
-      - zookeeper
-    links:
-      - zookeeper
+      - 9093:9093
+      - 9015:9015
     environment:
-      - ZOOKEEPER_CONNECT=zookeeper:2181
+      - CLUSTER_ID=oh-sxaDRTcyAr6pFRbXyzA
+      - BROKER_ID=1
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - NODE_ROLE=broker,controller
       - ADVERTISED_HOST_NAME=172.29.208.1
     volumes:
       - kafka_data:/var/lib/kafka/data
     networks:
       - debezium-network
 
-  connect:
+  debezium:
     container_name: debezium
-    image: jdbc-debezium-connect:latest
+    image:  quay.io/debezium/connect:latest
     ports:
       - 8083:8083
     depends_on:
@@ -102,9 +93,9 @@ services:
     ports:
       - "8082:8080"
     environment:
-      - KAFKA_CONNECT_URIS=http://connect:8083
+      - KAFKA_CONNECT_URIS=http://debezium:8083
     depends_on:
-      - connect
+      - debezium
     networks:
       - debezium-network
 
