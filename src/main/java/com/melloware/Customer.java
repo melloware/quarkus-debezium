@@ -17,15 +17,15 @@ public class Customer {
     /** The unique identifier for the customer */
     @JsonProperty("ID")
     public int id;
-    
+
     /** The customer's first name */
-    @JsonProperty("FIRST_NAME") 
+    @JsonProperty("FIRST_NAME")
     public String firstName;
-    
+
     /** The customer's last name */
     @JsonProperty("LAST_NAME")
     public String lastName;
-    
+
     /** The customer's email address */
     @JsonProperty("EMAIL")
     public String email;

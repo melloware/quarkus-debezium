@@ -37,15 +37,17 @@ public class CustomerStreamsManager {
 
     /** Configured Kafka topic name for customer events */
     @Inject
-    @ConfigProperty(name="customers.topic")
+    @ConfigProperty(name = "customers.topic")
     String customersTopic;
 
     /** Javers instance for diff calculation */
     private Javers diffTool = JaversBuilder.javers().withListCompareAlgorithm(SIMPLE).build();
 
     /**
-     * Creates and configures the Kafka Streams topology for processing customer events.
-     * The topology handles CREATE, UPDATE, and DELETE operations on Customer records,
+     * Creates and configures the Kafka Streams topology for processing customer
+     * events.
+     * The topology handles CREATE, UPDATE, and DELETE operations on Customer
+     * records,
      * logging the changes and calculating diffs for updates using Javers.
      *
      * @return A configured Kafka Streams {@link Topology} instance
@@ -68,17 +70,18 @@ public class CustomerStreamsManager {
 
         // Create a stream from the customers topic with configured serdes
         builder.stream(
-                        customersTopic,
-                        Consumed.with(longKeySerde, valueSerde)
-                )
+                customersTopic,
+                Consumed.with(longKeySerde, valueSerde))
                 .peek((k, v) -> {
                     // Skip if value is null
-                    if (v == null) return;
+                    if (v == null)
+                        return;
                     try {
                         // Parse the JSON value into a DebeziumEvent
-                        DebeziumEvent<Customer> event = objectMapper.readValue(v, new TypeReference<>() {});
+                        DebeziumEvent<Customer> event = objectMapper.readValue(v, new TypeReference<>() {
+                        });
                         DebeziumEvent.Payload<Customer> payload = event.getPayload();
-                        
+
                         // Handle different operation types
                         switch (payload.getOp()) {
                             case c -> {
@@ -87,9 +90,9 @@ public class CustomerStreamsManager {
                             }
                             case u -> {
                                 // Log customer update details
-                                log.info("UPDATE ID: {} Before: {}",  k, payload.getBefore());
+                                log.info("UPDATE ID: {} Before: {}", k, payload.getBefore());
                                 log.info("UPDATE ID: {} After: {}", k, payload.getAfter());
-                                
+
                                 // Calculate and log the differences between before and after states
                                 Diff diff = diffTool.compare(payload.getBefore(), payload.getAfter());
                                 log.info("UPDATE ID: {} Changes: {}", k, diffTool.getJsonConverter().toJson(diff));
@@ -98,12 +101,14 @@ public class CustomerStreamsManager {
                                 // Log customer deletion
                                 log.info("DELETE ID: {} Before: {}", k, payload.getBefore());
                             }
-                            default -> { throw new IllegalArgumentException("Unknown op: " + payload.getOp()); }
+                            default -> {
+                                throw new IllegalArgumentException("Unknown op: " + payload.getOp());
+                            }
                         }
 
                     } catch (Exception e) {
                         // Log any JSON parsing errors
-                        log.error("Error parsing JSON {}",k, e);
+                        log.error("Error parsing JSON {}", k, e);
                     }
                 });
 
