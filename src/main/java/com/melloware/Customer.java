@@ -1,5 +1,8 @@
 package com.melloware;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.Data;
 
@@ -8,17 +11,22 @@ import lombok.Data;
  */
 @Data
 @RegisterForReflection
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Customer {
 
     /** The unique identifier for the customer */
-    public int ID;
+    @JsonProperty("ID")
+    public int id;
     
     /** The customer's first name */
-    public String FIRST_NAME;
+    @JsonProperty("FIRST_NAME") 
+    public String firstName;
     
     /** The customer's last name */
-    public String LAST_NAME;
+    @JsonProperty("LAST_NAME")
+    public String lastName;
     
     /** The customer's email address */
-    public String EMAIL;
+    @JsonProperty("EMAIL")
+    public String email;
 }

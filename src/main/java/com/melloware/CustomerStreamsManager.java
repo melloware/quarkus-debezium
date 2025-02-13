@@ -1,6 +1,6 @@
 package com.melloware;
 
-import static org.javers.core.diff.ListCompareAlgorithm.LEVENSHTEIN_DISTANCE;
+import static org.javers.core.diff.ListCompareAlgorithm.SIMPLE;
 
 import java.util.Collections;
 
@@ -39,6 +39,9 @@ public class CustomerStreamsManager {
     @Inject
     @ConfigProperty(name="customers.topic")
     String customersTopic;
+
+    /** Javers instance for diff calculation */
+    private Javers diffTool = JaversBuilder.javers().withListCompareAlgorithm(SIMPLE).build();
 
     /**
      * Creates and configures the Kafka Streams topology for processing customer events.
@@ -84,16 +87,12 @@ public class CustomerStreamsManager {
                             }
                             case u -> {
                                 // Log customer update details
-                                log.debug("UPDATE ID: {} Before: {}",  k, payload.getBefore());
-                                log.debug("UPDATE ID: {} After: {}", k, payload.getAfter());
+                                log.info("UPDATE ID: {} Before: {}",  k, payload.getBefore());
+                                log.info("UPDATE ID: {} After: {}", k, payload.getAfter());
                                 
-                                // Create Javers instance for diff calculation
-                                Javers javers = JaversBuilder.javers()
-                                        .withListCompareAlgorithm(LEVENSHTEIN_DISTANCE)
-                                        .build();
                                 // Calculate and log the differences between before and after states
-                                Diff diff = javers.compare(payload.getBefore(), payload.getAfter());
-                                log.info("UPDATE ID: {} Changes: {}", k, javers.getJsonConverter().toJson(diff));
+                                Diff diff = diffTool.compare(payload.getBefore(), payload.getAfter());
+                                log.info("UPDATE ID: {} Changes: {}", k, diffTool.getJsonConverter().toJson(diff));
                             }
                             case d -> {
                                 // Log customer deletion

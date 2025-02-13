@@ -73,7 +73,7 @@ Verify the status of the connector:
 Expected output:
 
 ```plaintext
-source | oracle-customer-source-connector-00 | RUNNING | RUNNING | io.debezium.connector.oracle.OracleConnector
+source | oracle-source-connector | RUNNING | RUNNING | io.debezium.connector.oracle.OracleConnector
 ```
 
 ### 5. Insert and Update Data in Oracle
@@ -95,7 +95,7 @@ Insert sample customer data:
 ```sql
 INSERT INTO customers(ID, FIRST_NAME, LAST_NAME, EMAIL) VALUES (1031, 'Homer', 'Simpson', 'homer@springfield.gov');
 INSERT INTO customers(ID, FIRST_NAME, LAST_NAME, EMAIL) VALUES (1023, 'Rick', 'Sanchez', 'rick@citadel.com');
-INSERT INTO customers(ID, FIRST_NAME, LAST_NAME, EMAIL) VALUES (1033, 'Jerry', 'Smith', 'jerry.smith@nevertrying.org');
+INSERT INTO customers(ID, FIRST_NAME, LAST_NAME, EMAIL) VALUES (1033, 'Bob', 'Belcher', 'bob@burgerboss.com');
 ```
 
 Update customer records:
@@ -103,13 +103,13 @@ Update customer records:
 ```sql
 UPDATE CUSTOMERS SET email = 'homer.simpson@gmail.com' WHERE id = 1031;
 UPDATE CUSTOMERS SET email = 'rick.sanchez@gmail.com' WHERE id = 1023;
-UPDATE CUSTOMERS SET email = 'jerry.smith@gmail.com', last_name='Smith Jr.' WHERE id = 1033;
+UPDATE CUSTOMERS SET email = 'bob.belcher@gmail.com', first_name='Robert' WHERE id = 1033;
 ```
 
 Update a product description:
 
 ```sql
-UPDATE PRODUCTS SET description = 'Test Scooter Change' WHERE id = 101;
+UPDATE PRODUCTS SET description = 'Razor Scooter' WHERE id = 101;
 ```
 
 Insert an order:
@@ -150,8 +150,8 @@ Verify the connectors:
 Expected output:
 
 ```plaintext
+source | oracle-source-connector | RUNNING | RUNNING | io.debezium.connector.oracle.OracleConnector
 sink | postgres-sink-connector | RUNNING | RUNNING | io.debezium.connector.jdbc.JdbcSinkConnector
-source | oracle-customer-source-connector-00 | RUNNING | RUNNING | io.debezium.connector.oracle.OracleConnector
 ```
 
 ### 8. Verify Data in PostgreSQL
