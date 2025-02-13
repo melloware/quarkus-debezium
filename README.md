@@ -1,20 +1,20 @@
 # Quarkus Debezium Consumer
 
-This project demonstrates Change Data Capture (CDC) using Debezium with Oracle as the source database and Kafka Streams for processing customer data changes. It includes a Quarkus application that consumes Debezium CDC events, processes them using Kafka Streams, and can optionally sync the data to PostgreSQL.
+This project demonstrates Change Data Capture (CDC) using [Debezium](https://debezium.io/) with Oracle as the source database and Kafka Streams for processing customer data changes. It includes a Quarkus application that consumes Debezium CDC events, processes them using Kafka Streams, and can optionally sync the data to PostgreSQL.
 
 ## Architecture
 
 The application:
-- Captures changes from Oracle DB using Debezium Oracle Connector
-- Processes CDC events through Kafka Streams
-- Tracks customer record changes (creates, updates, deletes)
-- Uses Javers for detailed change tracking on updates
-- Can sync changes to PostgreSQL using Debezium JDBC Sink Connector
+- Captures changes from Oracle DB using [Debezium Oracle Connector](https://debezium.io/documentation/reference/stable/connectors/oracle.html)
+- Processes CDC events through [Quarkus Kafka Streams](https://quarkus.io/guides/kafka-streams)
+- Tracks database record changes (creates, updates, deletes)
+- Uses [Javers](https://github.com/javers/javers) for detailed change tracking on updates
+- Can sync changes to PostgreSQL using [Debezium JDBC Sink Connector](https://debezium.io/documentation/reference/stable/connectors/jdbc.html)
 
 ## Use Cases
 - Real-time data synchronization between databases such as Oracle and PostgreSQL
 - CDC pipeline for event-driven applications and microservices
-- Sending small payloads of change data through a WebSocket to the UI to render only what needs to be updated
+- Sending small payloads of database CDC events through a WebSocket to the UI to render only what needs to be updated
 - Third party application can stream event driven data changes from Kafka
 
 [![Use Cases](https://github.com/melloware/quarkus-debezium/blob/main/docker/debezium-use-cases.png)](https://github.com/melloware/quarkus-debezium)
@@ -28,7 +28,7 @@ This guide provides step-by-step instructions for setting up an Oracle database 
 
 - Docker and Docker Compose installed
 - PowerShell for executing connector scripts
-- Oracle and PostgreSQL database images set up in Docker
+- Java and Apache Maven installed
 
 ## Steps
 
@@ -37,7 +37,7 @@ This guide provides step-by-step instructions for setting up an Oracle database 
 Bring up the required services using Docker Compose:
 
 ```sh
-docker compose up
+docker compose up -d
 ```
 
 ### 2. Access the Oracle Container
@@ -172,6 +172,14 @@ Check if customer data has been replicated:
 
 ```sql
 SELECT * FROM customers;
+```
+
+### 9. Run the Quarkus Application
+
+Run the Quarkus application which subscribes to the Kafka "customers" topic and processes the CDC events:
+
+```sh
+./mvnw compile quarkus:dev
 ```
 
 ## Conclusion
