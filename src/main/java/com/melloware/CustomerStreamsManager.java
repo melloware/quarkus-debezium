@@ -82,6 +82,7 @@ public class CustomerStreamsManager {
                         });
                         DebeziumEvent.Payload<Customer> payload = event.getPayload();
 
+                        log.info("***************************************************");
                         // Handle different operation types
                         switch (payload.getOp()) {
                             case c -> {

@@ -13,6 +13,6 @@
     "schema.evolution": "basic",
     "table.name.format": "customers",
     "tasks.max": "1",
-    "topics": "test.DEBEZIUM.CUSTOMERS",
+    "topics": "test.DEBEZIUM.CUSTOMERS"
   }
 }

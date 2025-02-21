@@ -1,4 +1,10 @@
 services:
+  # Kafka broker running in KRaft mode (no ZooKeeper)
+  # Handles message streaming and event storage
+  # Exposes ports:
+  # - 9092: Kafka broker
+  # - 9093: Kafka controller
+  # - 9015: JMX monitoring
   kafka:
     container_name: kafka-kraft
     image: quay.io/debezium/kafka:latest
@@ -17,6 +23,10 @@ services:
     networks:
       - debezium-network
 
+  # Debezium Connect service
+  # Runs the Debezium connectors for CDC (Change Data Capture)
+  # Includes Oracle instant client for Oracle CDC
+  # Exposes port 8083 for REST API
   debezium:
     container_name: debezium
     image:  quay.io/debezium/connect:latest
@@ -39,6 +49,9 @@ services:
     networks:
       - debezium-network
 
+  # Web UI for monitoring Kafka
+  # Provides visualization of topics, brokers, messages
+  # Accessible at http://localhost:8081
   kafka-ui:
     container_name: kafka-dash
     image: provectuslabs/kafka-ui:latest
@@ -52,7 +65,11 @@ services:
     networks:
       - debezium-network
 
-  # Source DB's
+  # Oracle Database (Source)
+  # Free version of Oracle Database for CDC source
+  # Runs with archive logging enabled for CDC
+  # Exposes port 1521 for SQL*Net listener
+  # Includes initialization scripts for setup
   oracle:
     image: container-registry.oracle.com/database/free:latest
     container_name: oracle
@@ -71,7 +88,10 @@ services:
     networks:
       - debezium-network
 
-  # Sinks DB's
+  # PostgreSQL Database (Sink)
+  # Target database for CDC replication
+  # Exposes port 5432 for PostgreSQL connections
+  # Connect using: docker exec -it postgres bash -c 'psql -U $POSTGRES_USER $POSTGRES_DB'
   postgres:
     # *-----------------------------*
     # To connect to the DB:
@@ -87,6 +107,10 @@ services:
     networks:
       - debezium-network
 
+  # Debezium UI
+  # Web interface for managing Debezium connectors
+  # Accessible at http://localhost:8082
+  # Provides UI for configuring and monitoring CDC connectors
   debezium-ui:
     container_name: debezium-ui
     image: quay.io/debezium/debezium-ui:latest
@@ -99,10 +123,12 @@ services:
     networks:
       - debezium-network
 
+# Bridge network for container communication
 networks:
   debezium-network:
     driver: bridge
 
+# Persistent volumes for data storage
 volumes:
   kafka_data:
   oracle_data:
