@@ -1,4 +1,10 @@
+<div align="center">
+<img src="https://github.com/quarkiverse/.github/blob/main/assets/images/quarkus.svg" width="67" height="70" ><img src="https://github.com/quarkiverse/.github/blob/main/assets/images/plus-sign.svg" height="70" ><img src="https://www.vectorlogo.zone/logos/debeziumio/debeziumio-icon.svg" height="70" >
+
 # Quarkus Debezium Consumer
+</div>
+
+
 
 This project demonstrates Change Data Capture (CDC) using [Debezium](https://debezium.io/) with Oracle as the source database and Kafka Streams for processing customer data changes. It includes a Quarkus application that consumes Debezium CDC events, processes them using Kafka Streams, and can optionally sync the data to PostgreSQL.
 
