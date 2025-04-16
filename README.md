@@ -25,6 +25,29 @@ The application:
 
 [![Use Cases](https://github.com/melloware/quarkus-debezium/blob/main/docker/debezium-use-cases.png)](https://github.com/melloware/quarkus-debezium)
 
+## Track Changes
+
+Original Database Table (CUSTOMERS):
+
+| ID   | FIRST_NAME | LAST_NAME | EMAIL               |
+|------|------------|-----------|---------------------|
+| 1033 | Bob        | Belcher   | bob@burgerboss.com  |
+
+After UPDATE:
+
+| ID   | FIRST_NAME | LAST_NAME | EMAIL                 |
+|------|------------|-----------|------------------------|
+| 1033 | Robert     | Belcher   | bob.belcher@gmail.com |
+
+CDC Event Format (Flattened with Change Tracking):
+
+| COLUMN_NAME | OLD_VALUE     | NEW_VALUE           |
+|-------------|---------------|---------------------|
+| ID          | 1033          | 1033                |
+| FIRST_NAME  | Bob           | Robert              |
+| LAST_NAME   | Belcher       | Belcher             |
+| EMAIL       | bob@burgerboss.com | bob.belcher@gmail.com |
+
 
 ## Running the Stack
 
@@ -191,5 +214,7 @@ Run the Quarkus application which subscribes to the Kafka "customers" topic and 
 ## Conclusion
 
 This guide outlines how to set up an Oracle database with Debezium, configure source and sink connectors, and verify real-time data streaming into PostgreSQL using Kafka. By following these steps, you can ensure data consistency across different databases using CDC (Change Data Capture).
+
+
 
 
