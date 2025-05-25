@@ -54,7 +54,7 @@ services:
   # Accessible at http://localhost:8081
   kafka-ui:
     container_name: kafka-dash
-    image: provectuslabs/kafka-ui:latest
+    image: ghcr.io/kafbat/kafka-ui:latest
     depends_on:
       - kafka
     ports:
