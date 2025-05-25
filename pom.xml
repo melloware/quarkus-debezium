@@ -9,10 +9,9 @@
 
     <properties>
         <!-- libraries-->
-        <quarkus.platform.version>3.18.3</quarkus.platform.version>
-        <debezium.version>2.7.3.Final</debezium.version>
+        <quarkus.platform.version>3.23.0</quarkus.platform.version>
         <javers.version>7.7.0</javers.version>
-        <lombok.version>1.18.36</lombok.version>
+        <lombok.version>1.18.38</lombok.version>
         <!-- plugins-->
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-failsafe-plugin.version>3.5.2</maven-failsafe-plugin.version>
@@ -55,11 +54,6 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-smallrye-health</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.debezium</groupId>
-            <artifactId>debezium-core</artifactId>
-            <version>${debezium.version}</version>
         </dependency>
         <dependency>
             <groupId>org.javers</groupId>

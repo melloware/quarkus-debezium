@@ -17,7 +17,6 @@ import org.javers.core.diff.Diff;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.debezium.serde.DebeziumSerdes;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
@@ -61,8 +60,8 @@ public class CustomerStreamsManager {
         StreamsBuilder builder = new StreamsBuilder();
 
         // Configure the key serde for Long values using Debezium JSON serialization
-        Serde<Long> longKeySerde = DebeziumSerdes.payloadJson(Long.class);
-        longKeySerde.configure(Collections.emptyMap(), true);
+        Serde<String> stringKeySerde = Serdes.String();
+        stringKeySerde.configure(Collections.emptyMap(), true);
 
         // Configure the value serde as a String serde for raw JSON
         Serde<String> valueSerde = Serdes.String();
@@ -71,7 +70,7 @@ public class CustomerStreamsManager {
         // Create a stream from the customers topic with configured serdes
         builder.stream(
                 customersTopic,
-                Consumed.with(longKeySerde, valueSerde))
+                Consumed.with(stringKeySerde, valueSerde))
                 .peek((k, v) -> {
                     // Skip if value is null
                     if (v == null)
